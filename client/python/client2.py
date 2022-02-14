@@ -18,16 +18,16 @@ def heart():
 
     publish = {'user_id': user_id}
     while True:
-        time.sleep(5)
+        time.sleep(0.5)
         server.sendto(user_id.encode("utf-8"), ip_port)
-        info = server.recvfrom(512)
+        info = server.recvfrom(4096)
         if len(info[0]) == 1:
             if info[0][0] == MESSAGE_EXIST:
                 _client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 _client.connect((ip, 8889))
                 j = json.dumps(publish)
                 _client.send(j.encode('utf-8'))
-                msg = _client.recvfrom(128)
+                msg = _client.recvfrom(4096)
                 msg = msg[0].decode('utf-8')
                 print(msg)
                 _client.close()
@@ -40,7 +40,7 @@ _thread.start_new_thread(heart, ())
 print("input")
 
 sender = {'sender': user_id, 'receiver': user_id_dst,
-          'body': ['message0', 'message1', 'message2']}
+          'body': ['message2']}
 
 while True:
     msg = input()
