@@ -3,6 +3,8 @@ import json
 import socket
 import time
 
+from client.python.encryp import edcoder
+
 MESSAGE_EXIST = 1
 
 user_id = "sj"
@@ -10,7 +12,7 @@ user_id_dst = "bzp"
 
 # ip = "inlets.fun"
 
-ip = "192.168.31.76"
+ip = "127.0.0.1"
 
 
 def heart():
@@ -29,10 +31,17 @@ def heart():
                 _client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 _client.connect((ip, 8889))
                 j = json.dumps(publish)
-                _client.send(j.encode('utf-8'))
+                j = j.encode('utf-8')
+                buffer = list(j)
+                edcoder(buffer, len(buffer))
+                _client.send(bytes(buffer))
                 msg = _client.recvfrom(4096)
-                msg = msg[0].decode('utf-8')
-                print(msg)
+                msg = msg[0]
+                buffer = list(msg)
+                edcoder(buffer, len(buffer))
+                buffer = bytes(buffer)
+                buffer = buffer.decode('utf-8')
+                print(buffer)
                 _client.close()
         else:
             print("udp read empty")
@@ -41,8 +50,7 @@ def heart():
 _thread.start_new_thread(heart, ())
 
 print("input")
-sender = {'sender': user_id, 'receiver': user_id_dst,
-          'body': ['message0']}
+sender = {'sender': user_id, 'receiver': user_id_dst, 'body': ['message0']}
 
 while True:
     msg = input()
@@ -50,5 +58,8 @@ while True:
     client.connect((ip, 8888))
     sender['body'][0] = msg
     j = json.dumps(sender)
-    client.send(j.encode('utf-8'))
+    buffer = j.encode('utf-8')
+    buffer = list(buffer)
+    edcoder(buffer, len(buffer))
+    client.send(bytes(buffer))
     client.close()
