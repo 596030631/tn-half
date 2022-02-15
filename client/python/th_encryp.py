@@ -18,18 +18,3 @@ def edcoder(buffer, n):
     base = lp * len(key)
     for i in range(ll):
         buffer[i + base] ^= key[i]
-
-
-if __name__ == '__main__':
-    s = "你好nihao123{}{}{}{}{}{'''''''{}{}{}{nihao1你好1"
-    s = s.encode('utf-8')
-    print(s)
-    p = list(s)
-
-    print(p)
-    edcoder(p, len(p))
-    edcoder(p, len(p))
-
-    p = bytes(p)
-    print(p)
-    print(p.decode('utf-8'))
