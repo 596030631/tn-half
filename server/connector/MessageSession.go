@@ -26,8 +26,9 @@ func SessionReceiveCreate() {
 				continue
 			}
 			if n > 0 {
+				Decoder(buffer, n)
 				j := string(buffer[:n])
-				fmt.Printf("Receiver >>> %s\n", j)
+				fmt.Printf("\nReceiver >>> %s\n", j)
 				MessageArrived(buffer[:n])
 			}
 			_ = conn.Close()
@@ -55,9 +56,11 @@ func SessionPublishCreate() {
 				continue
 			}
 			if n > 0 {
+				Decoder(buffer, n)
 				fmt.Printf("Data:%s\n", string(buffer[:n]))
 				if n > 2 {
 					b, _ := json.Marshal(MessagePublish(buffer[:n]))
+					Encoder(b, len(b))
 					_, _ = conn.Write(b)
 				}
 			}
