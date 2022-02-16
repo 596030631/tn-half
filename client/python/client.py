@@ -1,12 +1,22 @@
+import json
 import time
 from tkinter import *
+
 from client_connect import ConnectExample
 
-conn = ConnectExample()
-conn.start_connect()
 
-me = 'sj'
-friend = 'bzp'
+def message_arrived(msg):
+    print("BBB >>> " + msg)
+    bean = json.loads(msg)
+    for info in bean['body']:
+        text_msg_content_list.insert(
+            END,
+            f'{bean["sourceId"]}:{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}\n{info}\n',
+            'green')
+
+
+conn = ConnectExample(message_arrived)
+conn.start_connect()
 
 root = Tk()
 root.title("聊天室")
@@ -38,19 +48,17 @@ frame_right.grid(row=0, column=1, rowspan=3, padx=2, pady=5)
 
 # 发送按钮
 def send_message():
-    text_msg_content_list.insert(END, f'\n{friend}:{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}\nHello',
-                                 'green')
-
     msg_send = text_msg_input.get("0.0", END)
     text_msg_content_list.insert(END,
-                                 f'\n{me}:{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}\n{msg_send}',
+                                 f'me:{time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())}\n{msg_send}\n',
                                  'green')
-    conn.send_message(msg_send)
+    conn.send_message(
+        str(msg_send).strip().replace(' ', '').replace('\n', '').replace('\t', '').replace('\r', '').strip()
+        )
     text_msg_input.delete('0.0', END)
 
 
 button_send_msg = Button(frame_chat_bottom, text="发送", command=send_message)
 button_send_msg.grid()
-
 
 root.mainloop()

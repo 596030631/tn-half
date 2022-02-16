@@ -6,15 +6,18 @@ import time
 from th_encryp import edcoder
 
 
-class ConnectExample:
+class ConnectExample(object):
     MESSAGE_EXIST = 1
     user_id = "sj"
     user_id_dst = "bzp"
     # ip = "inlets.fun"
     ip = "127.0.0.1"
+    list_message_sender = []
+    func = None
 
-    def __init__(self):
+    def __init__(self, _callback):
         print('init')
+        self.callback = _callback
 
     def heart(self):
         ip_port = (self.ip, 9999)
@@ -24,7 +27,7 @@ class ConnectExample:
         publish = {'user_id': self.user_id}
 
         while True:
-            time.sleep(0.5)
+            time.sleep(1)
             server.sendto(self.user_id.encode("utf-8"), ip_port)
             info = server.recvfrom(4096)
             if len(info[0]) == 1:
@@ -42,7 +45,8 @@ class ConnectExample:
                     edcoder(buffer, len(buffer))
                     buffer = bytes(buffer)
                     buffer = buffer.decode('utf-8')
-                    print(buffer)
+                    print("AAA >>> "+buffer)
+                    self.callback(buffer)
                     _client.close()
             else:
                 print("udp read empty")
@@ -50,11 +54,14 @@ class ConnectExample:
     def sender(self):
         sender = {'sender': self.user_id, 'receiver': self.user_id_dst, 'body': ['message0']}
         while True:
-            msg = input()
+            time.sleep(0.5)
+            if len(self.list_message_sender) <= 0:
+                continue
             client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             client.connect((self.ip, 8888))
-            sender['body'][0] = msg
+            sender['body'] = self.list_message_sender
             j = json.dumps(sender)
+            self.list_message_sender.clear()
             buffer = j.encode('utf-8')
             buffer = list(buffer)
             edcoder(buffer, len(buffer))
@@ -62,10 +69,12 @@ class ConnectExample:
             client.close()
 
     ''' 建立连接 '''
+
     def start_connect(self):
         _thread.start_new_thread(self.heart, ())
         _thread.start_new_thread(self.sender, ())
 
     ''' 发送消息 '''
+
     def send_message(self, msg_send):
-        pass
+        self.list_message_sender.append(msg_send)

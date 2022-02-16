@@ -3,7 +3,7 @@
 # import socket
 # import time
 #
-# from client import edcoder
+# from client.python.th_encryp import edcoder
 #
 # MESSAGE_EXIST = 1
 #
@@ -22,7 +22,7 @@
 #     publish = {'user_id': user_id}
 #
 #     while True:
-#         time.sleep(0.5)
+#         time.sleep(1)
 #         server.sendto(user_id.encode("utf-8"), ip_port)
 #         info = server.recvfrom(4096)
 #         if len(info[0]) == 1:
