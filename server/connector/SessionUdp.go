@@ -10,8 +10,8 @@ const messageExist byte = 1
 
 func HeartCreate() {
 	fmt.Println("---------------------- Start Heart ---------------------------")
-	laddr := net.UDPAddr{IP: net.IPv4zero, Port: 9999}
-	heartListener, err := net.ListenUDP("udp4", &laddr)
+	ladder := net.UDPAddr{IP: net.IPv4zero, Port: 9999}
+	heartListener, err := net.ListenUDP("udp4", &ladder)
 	if err != nil {
 		fmt.Println("---------------------- Heart Start Error ---------------------------")
 		return
